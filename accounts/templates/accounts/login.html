@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login - Project Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Log In to Your Account</h2>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me">
+                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Log In</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="{% url 'accounts:password_reset' %}">Forgot your password?</a>
+                </div>
+                <hr>
+                <div class="text-center">
+                    <p>Or log in with:</p>
+                    <a href="{% url 'accounts:oauth_login' 'google' %}" class="btn btn-outline-danger me-2">
+                        <i class="fab fa-google"></i> Google
+                    </a>
+                    <a href="{% url 'accounts:oauth_login' 'github' %}" class="btn btn-outline-dark">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </div>
+                <hr>
+                <p class="text-center">Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form');
+        var username = document.getElementById('id_username');
+        var password = document.getElementById('id_password');
+
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+
+        // Simple client-side validation
+        username.addEventListener('input', function() {
+            if (username.value.length < 3) {
+                username.setCustomValidity('Username must be at least 3 characters long');
+            } else {
+                username.setCustomValidity('');
+            }
+        });
+
+        password.addEventListener('input', function() {
+            if (password.value.length < 8) {
+                password.setCustomValidity('Password must be at least 8 characters long');
+            } else {
+                password.setCustomValidity('');
+            }
+        });
+    });
+</script>
+{% endblock %}

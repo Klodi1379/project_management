@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if team %}Edit Team: {{ team.name }}{% else %}Create New Team{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">{% if team %}Edit Team: {{ team.name }}{% else %}Create New Team{% endif %}</h1>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.name|as_crispy_field }}
+                {{ form.leader|as_crispy_field }}
+                {{ form.description|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                {{ form.members|as_crispy_field }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            {% if team %}Save Changes{% else %}Create Team{% endif %}
+        </button>
+        <a href="{% url 'accounts:team_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#id_members').select2({
+            placeholder: "Select team members",
+            allowClear: true
+        });
+    });
+</script>
+{% endblock %}

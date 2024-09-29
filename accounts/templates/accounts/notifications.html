@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - Project Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notification-item {
+        transition: background-color 0.3s;
+    }
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+    .notification-unread {
+        background-color: #e9ecef;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Notifications</h1>
+
+    {% if notifications %}
+        <div class="list-group">
+            {% for notification in notifications %}
+                <div class="list-group-item notification-item {% if not notification.is_read %}notification-unread{% endif %}">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ notification.title }}</h5>
+                        <small>{{ notification.created_at|timesince }} ago</small>
+                    </div>
+                    <p class="mb-1">{{ notification.message }}</p>
+                    <div class="mt-2">
+                        {% if not notification.is_read %}
+                            <form method="post" action="{% url 'accounts:mark_notification_read' notification.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Mark as Read</button>
+                            </form>
+                        {% endif %}
+                        <form method="post" action="{% url 'accounts:delete_notification' notification.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have no notifications at this time.</p>
+    {% endif %}
+</div>
+{% endblock %}

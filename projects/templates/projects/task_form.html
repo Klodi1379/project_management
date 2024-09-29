@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Task{% else %}Create New Task{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="mb-0">
+            {% if form.instance.pk %}
+                Edit Task: {{ form.instance.name }}
+            {% else %}
+                Create New Task for Project: {{ project.name }}
+            {% endif %}
+        </h2>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary">Save Task</button>
+            {% if project %}
+                <a href="{% url 'projects:detail' project.pk %}" class="btn btn-secondary">Cancel</a>
+            {% else %}
+                <a href="{% url 'projects:detail' form.instance.project.pk %}" class="btn btn-secondary">Cancel</a>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

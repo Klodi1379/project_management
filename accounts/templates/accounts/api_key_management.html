@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}API Key Management - Project Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .api-key {
+        font-family: monospace;
+        word-break: break-all;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">API Key Management</h1>
+
+    {% if user.api_key %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Your API Key</h5>
+                <p class="card-text api-key">{{ user.api_key }}</p>
+                <button class="btn btn-primary" id="copyApiKey">Copy API Key</button>
+                <form method="post" action="{% url 'accounts:revoke_api_key' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Revoke API Key</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <p>You don't have an API key yet.</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'accounts:generate_api_key' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Generate New API Key</button>
+    </form>
+
+    <div class="mt-4">
+        <h3>API Usage Instructions</h3>
+        <p>To use the API, include your API key in the Authorization header of your HTTP requests:</p>
+        <pre><code>Authorization: Api-Key YOUR_API_KEY_HERE</code></pre>
+        <p>Please keep your API key secure and do not share it with others.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('copyApiKey').addEventListener('click', function() {
+        var apiKey = document.querySelector('.api-key').textContent;
+        navigator.clipboard.writeText(apiKey).then(function() {
+            alert('API Key copied to clipboard!');
+        }, function(err) {
+            console.error('Could not copy text: ', err);
+        });
+    });
+</script>
+{% endblock %}

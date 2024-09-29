@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Project Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Welcome, {{ user.get_full_name }}</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Recent Projects</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for project in recent_projects %}
+                            <li class="list-group-item">
+                                <a href="{% url 'projects:detail' project.pk %}">{{ project.name }}</a>
+                                <span class="badge bg-{{ project.status|lower }}">{{ project.get_status_display }}</span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No recent projects.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Upcoming Tasks</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for task in upcoming_tasks %}
+                            <li class="list-group-item">
+                                <a href="{% url 'projects:task_detail' task.pk %}">{{ task.name }}</a>
+                                <small class="text-muted">Due: {{ task.due_date }}</small>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No upcoming tasks.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Quick Actions</h2>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'projects:create' %}" class="btn btn-primary me-2">Create New Project</a>
+                    <a href="{% url 'projects:task_list' %}" class="btn btn-secondary me-2">View All Tasks</a>
+                    <a href="{% url 'projects:notifications' %}" class="btn btn-info">
+                        View Notifications
+                        {% if unread_notifications > 0 %}
+                            <span class="badge bg-danger">{{ unread_notifications }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

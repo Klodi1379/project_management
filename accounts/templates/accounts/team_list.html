@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Team List - Project Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .team-card {
+        transition: transform 0.3s;
+    }
+    .team-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Team List</h1>
+        <a href="{% url 'accounts:team_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create New Team
+        </a>
+    </div>
+
+    {% if teams %}
+        <div class="row">
+            {% for team in teams %}
+                <div class="col-md-4 mb-4">
+                    <div class="card team-card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ team.name }}</h5>
+                            <p class="card-text"><strong>Leader:</strong> {{ team.leader.get_full_name|default:team.leader.username }}</p>
+                            <p class="card-text"><strong>Members:</strong> {{ team.members.count }}</p>
+                            <a href="{% url 'accounts:team_detail' team.id %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% include "includes/pagination.html" with page=teams %}
+    {% else %}
+        <p>No teams found. Create a new team to get started!</p>
+    {% endif %}
+</div>
+{% endblock %}

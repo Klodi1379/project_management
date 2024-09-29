@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register - Project Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Create an Account</h2>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
+                </form>
+                <hr>
+                <p class="text-center">Already have an account? <a href="{% url 'accounts:login' %}">Login here</a></p>
+                <div class="text-center mt-3">
+                    <p>Or register with:</p>
+                    <a href="{% url 'accounts:oauth_login' 'google' %}" class="btn btn-outline-danger me-2">
+                        <i class="fab fa-google"></i> Google
+                    </a>
+                    <a href="{% url 'accounts:oauth_login' 'github' %}" class="btn btn-outline-dark">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var passwordField = document.getElementById('id_password1');
+        var confirmPasswordField = document.getElementById('id_password2');
+        var form = document.querySelector('form');
+
+        function checkPasswordMatch() {
+            if (passwordField.value !== confirmPasswordField.value) {
+                confirmPasswordField.setCustomValidity("Passwords do not match");
+            } else {
+                confirmPasswordField.setCustomValidity('');
+            }
+        }
+
+        passwordField.addEventListener('change', checkPasswordMatch);
+        confirmPasswordField.addEventListener('keyup', checkPasswordMatch);
+
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+</script>
+{% endblock %}

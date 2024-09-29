@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}User Search - Project Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">User Search</h1>
+
+    <form method="get" action="{% url 'accounts:user_search' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search by username, email, or name" value="{{ query }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    {% if query %}
+        <h2>Search Results for "{{ query }}"</h2>
+        {% if page_obj %}
+            <div class="list-group">
+                {% for user in page_obj %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                            <small>{{ user.role }}</small>
+                        </div>
+                        <p class="mb-1">{{ user.email }}</p>
+                        <small>Last login: {{ user.last_login|date:"F d, Y H:i"|default:"Never" }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% include "includes/pagination.html" with page=page_obj %}
+        {% else %}
+            <p>No users found matching your search criteria.</p>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

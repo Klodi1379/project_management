@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Account Settings - Project Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Account Settings</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Notification Preferences</h5>
+                    <form method="post" action="{% url 'accounts:update_notification_settings' %}">
+                        {% csrf_token %}
+                        {{ notification_form|crispy }}
+                        <button type="submit" class="btn btn-primary">Save Notification Settings</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Privacy Settings</h5>
+                    <form method="post" action="{% url 'accounts:update_privacy_settings' %}">
+                        {% csrf_token %}
+                        {{ privacy_form|crispy }}
+                        <button type="submit" class="btn btn-primary">Save Privacy Settings</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Two-Factor Authentication</h5>
+            {% if user.two_factor_auth %}
+                <p>Two-factor authentication is currently enabled.</p>
+                <form method="post" action="{% url 'accounts:disable_two_factor' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning">Disable Two-Factor Authentication</button>
+                </form>
+            {% else %}
+                <p>Two-factor authentication is currently disabled.</p>
+                <a href="{% url 'accounts:enable_two_factor' %}" class="btn btn-success">Enable Two-Factor Authentication</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Delete Account</h5>
+            <p class="text-danger">Warning: This action is irreversible. All your data will be permanently deleted.</p>
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete My Account</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteAccountModalLabel">Confirm Account Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                <form method="post" action="{% url 'accounts:delete_account' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="confirmDelete" class="form-label">Type "DELETE" to confirm:</label>
+                        <input type="text" class="form-control" id="confirmDelete" name="confirm_delete" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Permanently Delete My Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

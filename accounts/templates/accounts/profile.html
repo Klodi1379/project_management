@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ user.username }}'s Profile - Project Management System{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .profile-header {
+        background-color: #f8f9fa;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+    .profile-picture {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    .tab-pane {
+        padding-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+                {% comment %} <img src="{{ user.profile_picture.url|default:'/static/images/default_profile.png' }}" alt="{{ user.username }}" class="profile-picture mb-3"> {% endcomment %}
+                <h2>{{ user.get_full_name|default:user.username }}</h2>
+                <p class="text-muted">{{ user.role }}</p>
+            </div>
+            <div class="col-md-9">
+                <h4>About Me</h4>
+                <p>{{ user.bio|default:"No bio available." }}</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Department:</strong> {{ user.profile.department|default:"Not specified" }}</p>
+                        <p><strong>Experience:</strong> {{ user.profile.years_of_experience }} years</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="edit-tab" data-bs-toggle="tab" data-bs-target="#edit" type="button" role="tab" aria-controls="edit" aria-selected="true">Edit Profile</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="skills-tab" data-bs-toggle="tab" data-bs-target="#skills" type="button" role="tab" aria-controls="skills" aria-selected="false">Skills & Certifications</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab" aria-controls="activity" aria-selected="false">Recent Activity</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="profileTabsContent">
+        <div class="tab-pane fade show active" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ user_form|crispy }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ profile_form|crispy }}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="skills" role="tabpanel" aria-labelledby="skills-tab">
+            <h4>Skills</h4>
+            <select class="form-control select2-multiple" name="skills" multiple="multiple">
+                {% for skill in user.profile.skills %}
+                    <option value="{{ skill }}" selected>{{ skill }}</option>
+                {% endfor %}
+            </select>
+            <h4 class="mt-4">Certifications</h4>
+            <ul class="list-group">
+                {% for cert in user.profile.certifications %}
+                    <li class="list-group-item">{{ cert }}</li>
+                {% endfor %}
+            </ul>
+            <button class="btn btn-primary mt-3" id="updateSkillsCerts">Update Skills & Certifications</button>
+        </div>
+        <div class="tab-pane fade" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+            <h4>Recent Activity</h4>
+            <ul class="list-group">
+                {% for activity in user_activities %}
+                    <li class="list-group-item">
+                        <strong>{{ activity.activity_type }}</strong> - {{ activity.timestamp|date:"F d, Y H:i" }}
+                        <p>{{ activity.description }}</p>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No recent activity.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.select2-multiple').select2({
+            tags: true,
+            tokenSeparators: [',', ' '],
+            placeholder: "Add your skills"
+        });
+
+        $('#updateSkillsCerts').click(function() {
+            var skills = $('.select2-multiple').val();
+            $.ajax({
+                {% comment %} url: '{% url "accounts:update_skills" %}', {% endcomment %}
+                method: 'POST',
+                data: {
+                    'skills': skills,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if(response.success) {
+                        alert('Skills updated successfully!');
+                    } else {
+                        alert('Error updating skills. Please try again.');
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

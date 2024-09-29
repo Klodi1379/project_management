@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - Project Management System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
+<style>
+    .card-dashboard {
+        transition: transform 0.3s;
+    }
+    .card-dashboard:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .stats-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+    
+    <div class="row">
+        <!-- Quick Stats -->
+        <div class="col-md-3 mb-4">
+            <div class="card card-dashboard h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-tasks stats-icon text-primary"></i>
+                    <h5 class="card-title">Active Tasks</h5>
+                    <p class="card-text display-4">{{ active_tasks_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card card-dashboard h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-project-diagram stats-icon text-success"></i>
+                    <h5 class="card-title">Active Projects</h5>
+                    <p class="card-text display-4">{{ active_projects_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card card-dashboard h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users stats-icon text-info"></i>
+                    <h5 class="card-title">Team Members</h5>
+                    <p class="card-text display-4">{{ team_members_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card card-dashboard h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock stats-icon text-warning"></i>
+                    <h5 class="card-title">Hours Logged</h5>
+                    <p class="card-text display-4">{{ hours_logged }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Projects -->
+        <div class="col-md-6 mb-4">
+            <div class="card card-dashboard h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Projects</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for project in recent_projects %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="{% url 'projects:detail' project.id %}">{{ project.name }}</a>
+                                <span class="badge bg-primary rounded-pill">{{ project.tasks.count }} tasks</span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No recent projects.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer text-end">
+                   <a href="{% url 'projects:list' %}" class="btn btn-sm btn-outline-primary">View All Projects</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Deadlines -->
+        <div class="col-md-6 mb-4">
+            <div class="card card-dashboard h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Upcoming Deadlines</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for task in upcoming_deadlines %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a href="{% url 'tasks:detail' task.id %}">{{ task.name }}</a>
+                                    <small class="text-muted d-block">{{ task.project.name }}</small>
+                                </div>
+                                <span class="badge {% if task.is_overdue %}bg-danger{% else %}bg-warning{% endif %} rounded-pill">
+                                    {{ task.due_date|date:"M d" }}
+                                </span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No upcoming deadlines.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer text-end">
+                    {% comment %} <a href="{% url 'tasks:list' %}" class="btn btn-sm btn-outline-primary">View All Tasks</a> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Project Progress Chart -->
+        <div class="col-md-6 mb-4">
+            <div class="card card-dashboard h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Project Progress</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="projectProgressChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-md-6 mb-4">
+            <div class="card card-dashboard h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for activity in recent_activities %}
+                            <li class="list-group-item">
+                                <small class="text-muted float-end">{{ activity.timestamp|timesince }} ago</small>
+                                <strong>{{ activity.user.get_full_name|default:activity.user.username }}</strong> {{ activity.description }}
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No recent activity.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'accounts:user_activity' %}" class="btn btn-sm btn-outline-primary">View All Activity</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script>
+    // Project Progress Chart
+    var ctx = document.getElementById('projectProgressChart').getContext('2d');
+    var projectProgressChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'In Progress', 'Not Started'],
+            datasets: [{
+                data: [{{ completed_projects }}, {{ in_progress_projects }}, {{ not_started_projects }}],
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

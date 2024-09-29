@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">{{ project.name }}</h2>
+        <div>
+            <a href="{% url 'projects:update' project.pk %}" class="btn btn-primary btn-sm">Edit</a>
+            <a href="{% url 'projects:delete' project.pk %}" class="btn btn-danger btn-sm">Delete</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Description:</strong> {{ project.description }}</p>
+                <p><strong>Client:</strong> {{ project.client }}</p>
+                <p><strong>Status:</strong> {{ project.get_status_display }}</p>
+                <p><strong>Priority:</strong> {{ project.get_priority_display }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Start Date:</strong> {{ project.start_date }}</p>
+                <p><strong>End Date:</strong> {{ project.end_date }}</p>
+                <p><strong>Budget:</strong> ${{ project.budget|floatformat:2 }}</p>
+                <p><strong>Completion:</strong> {{ project.get_completion_percentage }}%</p>
+            </div>
+        </div>
+        <hr>
+        <h3>Team Members</h3>
+        <ul class="list-group">
+            {% for member in project.team_members.all %}
+                <li class="list-group-item">{{ member.get_full_name }}</li>
+            {% empty %}
+                <li class="list-group-item">No team members assigned yet.</li>
+            {% endfor %}
+        </ul>
+        <hr>
+        <h3>Tasks</h3>
+        <a href="{% url 'projects:task_create' project.pk %}" class="btn btn-success mb-3">Add New Task</a>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Assigned To</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in project.tasks.all %}
+                        <tr>
+                            <td>{{ task.name }}</td>
+                            <td>{{ task.get_status_display }}</td>
+                            <td>{{ task.assigned_to.get_full_name }}</td>
+                            <td>{{ task.due_date }}</td>
+                            <td>
+                                <a href="{% url 'projects:task_update' task.pk %}" class="btn btn-primary btn-sm">Edit</a>
+                                <a href="{% url 'projects:task_delete' task.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">No tasks created yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

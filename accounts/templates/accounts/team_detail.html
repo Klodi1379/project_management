@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ team.name }} - Team Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ team.name }}</h1>
+        {% if user == team.leader or user.is_staff %}
+            <a href="{% url 'accounts:team_edit' team.id %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit Team
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Team Information</h5>
+                    <p><strong>Leader:</strong> {{ team.leader.get_full_name|default:team.leader.username }}</p>
+                    <p><strong>Created:</strong> {{ team.created_at|date:"F d, Y" }}</p>
+                    <p><strong>Description:</strong> {{ team.description|default:"No description provided." }}</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Team Members</h5>
+                    <ul class="list-group">
+                        {% for member in team.members.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ member.get_full_name|default:member.username }}
+                                <span class="badge bg-primary rounded-pill">{{ member.role }}</span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No members in this team yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Active Projects</h5>
+                    <ul class="list-group">
+                        {% for project in team.projects.all %}
+                            <li class="list-group-item">
+                                <a href="{% url 'projects:detail' project.id %}">{{ project.name }}</a>
+                                <div class="progress mt-2" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ project.progress }}%;" aria-valuenow="{{ project.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No active projects for this team.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Activity</h5>
+                    <ul class="list-group">
+                        {% for activity in team_activities %}
+                            <li class="list-group-item">
+                                <small class="text-muted float-end">{{ activity.timestamp|timesince }} ago</small>
+                                <strong>{{ activity.user.get_full_name|default:activity.user.username }}</strong> {{ activity.description }}
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No recent activity for this team.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
