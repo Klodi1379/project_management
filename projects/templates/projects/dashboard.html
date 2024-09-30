@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Project Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Project Dashboard</h1>
+
+    <div class="row">
+        <!-- Project Statistics -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    Project Statistics
+                </div>
+                <div class="card-body">
+                    <canvas id="projectChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Statistics -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    Task Statistics
+                </div>
+                <div class="card-body">
+                    <canvas id="taskChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Projects -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    Recent Projects
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for project in recent_projects %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="{% url 'projects:detail' project.id %}">{{ project.name }}</a>
+                                <span class="badge bg-primary rounded-pill">{{ project.get_status_display }}</span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No recent projects.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Deadlines -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    Upcoming Deadlines
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for task in upcoming_deadlines %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="{% url 'projects:task_detail' task.id %}">{{ task.name }}</a>
+                                <span class="badge bg-warning rounded-pill">{{ task.due_date|date:"M d, Y" }}</span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No upcoming deadlines.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Project Statistics Chart
+    var projectCtx = document.getElementById('projectChart').getContext('2d');
+    var projectChart = new Chart(projectCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Active', 'Completed', 'Other'],
+            datasets: [{
+                data: [{{ active_projects }}, {{ completed_projects }}, {{ total_projects|add:"-"|add:active_projects|add:"-"|add:completed_projects }}],
+                backgroundColor: ['#36a2eb', '#ff6384', '#ffce56']
+            }]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Project Status Distribution'
+            }
+        }
+    });
+
+    // Task Statistics Chart
+    var taskCtx = document.getElementById('taskChart').getContext('2d');
+    var taskChart = new Chart(taskCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Total', 'Completed', 'In Progress', 'Overdue'],
+            datasets: [{
+                label: 'Tasks',
+                data: [{{ total_tasks }}, {{ tasks_completed }}, {{ tasks_in_progress }}, {{ overdue_tasks }}],
+                backgroundColor: ['#36a2eb', '#ff6384', '#ffce56', '#ff9f40']
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            title: {
+                display: true,
+                text: 'Task Status Overview'
+            }
+        }
+    });
+</script>
+{% endblock %}

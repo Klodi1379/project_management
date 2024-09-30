@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
+from crm.models import Client
+
 class Project(models.Model):
     STATUS_CHOICES = (
         ('planning', 'Planning'),
@@ -15,7 +17,7 @@ class Project(models.Model):
         ('medium', 'Medium'),
         ('high', 'High'),
     )
-
+    client = models.ForeignKey('crm.Client', on_delete=models.SET_NULL, null=True, blank=True, related_name='projects')
     name = models.CharField(max_length=200)
     description = models.TextField()
     start_date = models.DateField()

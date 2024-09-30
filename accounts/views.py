@@ -293,3 +293,38 @@ def dashboard(request):
         'user_teams': user_teams,
         'recent_activities': recent_activities
     })    
+    
+    
+    
+    
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import UserProfileForm, NotificationSettingsForm
+from .models import NotificationSettings
+
+@login_required
+def notification_settings(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        form = NotificationSettingsForm(request.POST, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Notification settings updated successfully.')
+            return redirect('accounts:profile')
+    else:
+        form = NotificationSettingsForm(instance=user_profile)
+    
+    return render(request, 'accounts/notification_settings.html', {'form': form})
+@login_required
+def update_notification_settings(request):
+    if request.method == 'POST':
+        notification_settings, created = NotificationSettings.objects.get_or_create(user=request.user)
+        form = NotificationSettingsForm(request.POST, instance=notification_settings)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Notification settings updated successfully.')
+        else:
+            messages.error(request, 'There was an error updating your notification settings.')
+    return redirect('accounts:account_settings')

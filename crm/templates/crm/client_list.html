@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Client List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Clients</h1>
+
+    <!-- Search and Filter Form -->
+    <form method="get" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Search clients" value="{{ request.GET.search }}">
+            </div>
+            <div class="col-md-3">
+                <select name="industry" class="form-select">
+                    <option value="">All Industries</option>
+                    {% for industry in industries %}
+                        <option value="{{ industry }}" {% if request.GET.industry == industry %}selected{% endif %}>{{ industry }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="sort" class="form-select">
+                    <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Sort by Name</option>
+                    <option value="-created_at" {% if request.GET.sort == '-created_at' %}selected{% endif %}>Sort by Newest</option>
+                    <option value="created_at" {% if request.GET.sort == 'created_at' %}selected{% endif %}>Sort by Oldest</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Apply</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Client List -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Client List</span>
+            <a href="{% url 'crm:client_create' %}" class="btn btn-success btn-sm">Add New Client</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Industry</th>
+                            <th>Contact</th>
+                            <th>Projects</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in clients %}
+                            <tr>
+                                <td>{{ client.name }}</td>
+                                <td>{{ client.industry }}</td>
+                                <td>
+                                    {% with primary_contact=client.get_primary_contact %}
+                                        {% if primary_contact %}
+                                            {{ primary_contact.name }}<br>
+                                            {{ primary_contact.email }}
+                                        {% else %}
+                                            No primary contact
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td>{{ client.projects.count }}</td>
+                                <td>
+                                    <a href="{% url 'crm:client_detail' client.id %}" class="btn btn-info btn-sm">View</a>
+                                    <a href="{% url 'crm:client_update' client.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No clients found.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

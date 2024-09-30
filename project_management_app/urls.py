@@ -24,5 +24,8 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('projects/', include('projects.urls')),
     path('', HomeView.as_view(), name='home'),
+    path('resource/', include('resource.urls')),
+    path('reporting/', include('reporting.urls')),
+    path('crm/', include('crm.urls')),
 
 ]

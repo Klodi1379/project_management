@@ -55,11 +55,17 @@ class TeamCreationForm(forms.ModelForm):
         self.fields['members'].queryset = CustomUser.objects.all()
         self.fields['members'].widget = forms.CheckboxSelectMultiple()
 
-class NotificationSettingsForm(forms.Form):
-    email_notifications = forms.BooleanField(required=False)
-    push_notifications = forms.BooleanField(required=False)
-    notification_frequency = forms.ChoiceField(choices=[
-        ('real_time', 'Real-time'),
-        ('daily', 'Daily digest'),
-        ('weekly', 'Weekly digest')
-    ])
+
+
+class NotificationSettingsForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['email_notifications', 'push_notifications', 'notification_frequency']
+        widgets = {
+            'notification_frequency': forms.Select(attrs={'class': 'form-control'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email_notifications'].widget.attrs.update({'class': 'form-check-input'})
+        self.fields['push_notifications'].widget.attrs.update({'class': 'form-check-input'})

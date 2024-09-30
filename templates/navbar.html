@@ -11,11 +11,53 @@
                         <a class="nav-link" href="{% url 'home' %}">Home</a>
                     </li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'projects:list' %}">Projects</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Projects
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="projectsDropdown">
+                                <li><a class="dropdown-item" href="{% url 'projects:list' %}">All Projects</a></li>
+                                <li><a class="dropdown-item" href="{% url 'projects:create' %}">Create Project</a></li>
+                                <li><a class="dropdown-item" href="{% url 'projects:dashboard' %}">Project Dashboard</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'projects:task_list' %}">Tasks</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="tasksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Tasks
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="tasksDropdown">
+                                <li><a class="dropdown-item" href="{% url 'projects:task_list' %}">All Tasks</a></li>
+                                {% comment %} <li><a class="dropdown-item" href="{% url 'projects:task_create' %}">Create Task</a></li> {% endcomment %}
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="crmDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                CRM
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="crmDropdown">
+                                <li><a class="dropdown-item" href="{% url 'crm:client_list' %}">Clients</a></li>
+                                <li><a class="dropdown-item" href="{% url 'crm:client_create' %}">Add Client</a></li>
+                                {% comment %} <li><a class="dropdown-item" href="{% url 'crm:interaction_list' %}">Interactions</a></li> {% endcomment %}
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Resources
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="resourcesDropdown">
+                                <li><a class="dropdown-item" href="{% url 'resource:resource_list' %}">All Resources</a></li>
+                                <li><a class="dropdown-item" href="{% url 'resource:resource_create' %}">Add Resource</a></li>
+                                <li><a class="dropdown-item" href="{% url 'resource:allocation_list' %}">Allocations</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Reports
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+                                <li><a class="dropdown-item" href="{% url 'reporting:report_list' %}">All Reports</a></li>
+                                <li><a class="dropdown-item" href="{% url 'reporting:report_create' %}">Create Report</a></li>
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'accounts:team_list' %}">Teams</a>
@@ -33,12 +75,15 @@
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user"></i> {{ user.username }}
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
                                 <li><a class="dropdown-item" href="{% url 'accounts:account_settings' %}">Settings</a></li>
+                                {% if user.is_staff %}
+                                    <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin Panel</a></li>
+                                {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
                             </ul>
