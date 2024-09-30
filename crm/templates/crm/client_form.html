@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Client{% endblock %}
+
+{% block content %}
+<h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Client</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field.as_widget|safe }}
+            {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{% url 'crm:client_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var formControls = document.querySelectorAll('input, select, textarea');
+        formControls.forEach(function(element) {
+            element.classList.add('form-control');
+        });
+    });
+</script>
+{% endblock %}

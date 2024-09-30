@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}{{ client.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ client.name }}</h1>
+<p><strong>Industry:</strong> {{ client.industry }}</p>
+<p><strong>Website:</strong> <a href="{{ client.website }}">{{ client.website }}</a></p>
+<p><strong>Description:</strong> {{ client.description }}</p>
+<p><strong>Address:</strong> {{ client.address }}</p>
+
+<h2>Contacts</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for contact in contacts %}
+        <tr>
+            <td>{{ contact.name }}</td>
+            <td>{{ contact.position }}</td>
+            <td>{{ contact.email }}</td>
+            <td>{{ contact.phone }}</td>
+            <td>
+                <a href="{% url 'crm:contact_update' contact.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a href="{% url 'crm:contact_delete' contact.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No contacts found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'crm:contact_create' %}?client={{ client.pk }}" class="btn btn-primary">Add Contact</a>
+
+<h2>Recent Interactions</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Summary</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for interaction in interactions %}
+        <tr>
+            <td>{{ interaction.date }}</td>
+            <td>{{ interaction.get_interaction_type_display }}</td>
+            <td>{{ interaction.summary|truncatewords:20 }}</td>
+            <td>
+                <a href="{% url 'crm:interaction_update' interaction.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No interactions found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'crm:interaction_create' %}?client={{ client.pk }}" class="btn btn-primary">Add Interaction</a>
+
+<h2>Documents</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Uploaded At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for document in documents %}
+        <tr>
+            <td>{{ document.title }}</td>
+            <td>{{ document.uploaded_at }}</td>
+            <td>
+                <a href="{{ document.document.url }}" class="btn btn-sm btn-outline-primary">Download</a>
+                <a href="{% url 'crm:document_delete' document.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No documents found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'crm:document_create' %}?client={{ client.pk }}" class="btn btn-primary">Add Document</a>
+
+{% endblock %}
