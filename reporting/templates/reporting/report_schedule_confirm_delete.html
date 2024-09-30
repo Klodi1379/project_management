@@ -1,0 +1,15 @@
+{% extends "reporting/base.html" %}
+
+{% block title %}Delete Report Schedule{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Delete Report Schedule</h1>
+
+<p>Are you sure you want to delete the schedule for the report "{{ object.report.title }}"?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+    <a href="{% url 'reporting:report_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

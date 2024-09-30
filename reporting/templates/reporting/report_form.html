@@ -1,21 +1,16 @@
-{% extends "base.html" %}
+{% extends "reporting/base.html" %}
 
-{% load crispy_forms_tags %}
-{% load static %}
-
-
-
-{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Client{% endblock %}
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Report{% endblock %}
 
 {% block content %}
-<h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Client</h1>
+<h1 class="mb-4">{% if form.instance.pk %}Edit{% else %}Create{% endif %} Report</h1>
 
 <form method="post">
     {% csrf_token %}
     {% for field in form %}
         <div class="mb-3">
             <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-            {{ field.as_widget|safe }}
+            {{ field }}
             {% if field.help_text %}
                 <div class="form-text">{{ field.help_text }}</div>
             {% endif %}
@@ -25,7 +20,7 @@
         </div>
     {% endfor %}
     <button type="submit" class="btn btn-primary">Save</button>
-    <a href="{% url 'crm:client_list' %}" class="btn btn-secondary">Cancel</a>
+    <a href="{% url 'reporting:report_list' %}" class="btn btn-secondary">Cancel</a>
 </form>
 {% endblock %}
 

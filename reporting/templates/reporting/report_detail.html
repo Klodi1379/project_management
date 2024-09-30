@@ -1,0 +1,46 @@
+{% extends "reporting/base.html" %}
+
+{% block title %}{{ report.title }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ report.title }}</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Report Details</h5>
+        <p><strong>Type:</strong> {{ report.get_report_type_display }}</p>
+        <p><strong>Description:</strong> {{ report.description }}</p>
+        <p><strong>Created by:</strong> {{ report.created_by.username }}</p>
+        <p><strong>Created at:</strong> {{ report.created_at|date:"Y-m-d H:i" }}</p>
+        <p><strong>Last generated:</strong> {{ report.last_generated|date:"Y-m-d H:i"|default:"Not generated yet" }}</p>
+        {% if report.project %}<p><strong>Project:</strong> {{ report.project.name }}</p>{% endif %}
+        {% if report.resource %}<p><strong>Resource:</strong> {{ report.resource.name }}</p>{% endif %}
+        {% if report.client %}<p><strong>Client:</strong> {{ report.client.name }}</p>{% endif %}
+        {% if report.date_range_start %}<p><strong>Date range:</strong> {{ report.date_range_start|date:"Y-m-d" }} to {{ report.date_range_end|date:"Y-m-d" }}</p>{% endif %}
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Report Data</h5>
+        {% if report_data %}
+            {% for key, value in report_data.items %}
+                <p><strong>{{ key|title }}:</strong> {{ value }}</p>
+            {% endfor %}
+        {% else %}
+            <p>No data available for this report.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mb-4">
+    <h5>Report Chart</h5>
+    <img src="{% url 'reporting:report_chart' report.pk %}" alt="Report Chart" class="img-fluid">
+</div>
+
+<div class="mb-4">
+    <a href="{% url 'reporting:report_update' report.pk %}" class="btn btn-primary">Edit Report</a>
+    <a href="{% url 'reporting:report_delete' report.pk %}" class="btn btn-danger">Delete Report</a>
+    <a href="{% url 'reporting:report_export_csv' report.pk %}" class="btn btn-secondary">Export as CSV</a>
+</div>
+{% endblock %}
