@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Resources{% endblock %}
+
+{% block content %}
+<h1>Resources</h1>
+<a href="{% url 'resource:resource_create' %}" class="btn btn-primary mb-3">Add New Resource</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for resource in resources %}
+        <tr>
+            <td><a href="{% url 'resource:resource_detail' resource.pk %}">{{ resource.name }}</a></td>
+            <td>{{ resource.category.name }}</td>
+            <td>{{ resource.quantity }}</td>
+            <td>{{ resource.get_status_display }}</td>
+            <td>
+                <a href="{% url 'resource:resource_update' resource.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a href="{% url 'resource:resource_delete' resource.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No resources found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

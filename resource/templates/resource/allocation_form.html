@@ -1,0 +1,47 @@
+{% extends "resource/base.html" %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Resource Allocation{% endblock %}
+
+{% block content %}
+<h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Resource Allocation</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{% url 'resource:allocation_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var formControls = document.querySelectorAll('input, select, textarea');
+        formControls.forEach(function(element) {
+            element.classList.add('form-control');
+        });
+
+        // Special handling for datetime-local inputs
+        var datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
+        datetimeInputs.forEach(function(element) {
+            element.classList.add('form-control');
+            // If the field has a value, format it correctly for datetime-local input
+            if (element.value) {
+                var date = new Date(element.value);
+                element.value = date.toISOString().slice(0, 16);
+            }
+        });
+    });
+</script>
+{% endblock %}

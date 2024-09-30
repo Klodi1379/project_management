@@ -1,0 +1,42 @@
+{% extends "resource/base.html" %}
+
+{% block title %}Resource Allocations{% endblock %}
+
+{% block content %}
+<h1>Resource Allocations</h1>
+<a href="{% url 'resource:allocation_create' %}" class="btn btn-primary mb-3">Add New Allocation</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Resource</th>
+            <th>Project</th>
+            <th>User</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Quantity</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for allocation in allocations %}
+        <tr>
+            <td>{{ allocation.resource.name }}</td>
+            <td>{{ allocation.project.name }}</td>
+            <td>{{ allocation.user.username }}</td>
+            <td>{{ allocation.start_date }}</td>
+            <td>{{ allocation.end_date }}</td>
+            <td>{{ allocation.quantity_allocated }}</td>
+            <td>
+                <a href="{% url 'resource:allocation_update' allocation.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a href="{% url 'resource:allocation_delete' allocation.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No allocations found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -9,13 +9,13 @@ from .forms import ResourceCategoryForm, ResourceForm, ResourceAllocationForm, M
 # ResourceCategory Views
 class ResourceCategoryListView(LoginRequiredMixin, ListView):
     model = ResourceCategory
-    template_name = 'resources/category_list.html'
+    template_name = 'resource/category_list.html'
     context_object_name = 'categories'
 
 class ResourceCategoryCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = ResourceCategory
     form_class = ResourceCategoryForm
-    template_name = 'resources/category_form.html'
+    template_name = 'resource/category_form.html'
     success_url = reverse_lazy('resources:category_list')
     permission_required = 'resources.add_resourcecategory'
 
@@ -26,7 +26,7 @@ class ResourceCategoryCreateView(LoginRequiredMixin, PermissionRequiredMixin, Cr
 class ResourceCategoryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = ResourceCategory
     form_class = ResourceCategoryForm
-    template_name = 'resources/category_form.html'
+    template_name = 'resource/category_form.html'
     success_url = reverse_lazy('resources:category_list')
     permission_required = 'resources.change_resourcecategory'
 
@@ -36,7 +36,7 @@ class ResourceCategoryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Up
 
 class ResourceCategoryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = ResourceCategory
-    template_name = 'resources/category_confirm_delete.html'
+    template_name = 'resource/category_confirm_delete.html'
     success_url = reverse_lazy('resources:category_list')
     permission_required = 'resources.delete_resourcecategory'
 
@@ -47,18 +47,18 @@ class ResourceCategoryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, De
 # Resource Views
 class ResourceListView(LoginRequiredMixin, ListView):
     model = Resource
-    template_name = 'resources/resource_list.html'
+    template_name = 'resource/resource_list.html'
     context_object_name = 'resources'
 
 class ResourceDetailView(LoginRequiredMixin, DetailView):
     model = Resource
-    template_name = 'resources/resource_detail.html'
+    template_name = 'resource/resource_detail.html'
     context_object_name = 'resource'
 
 class ResourceCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Resource
     form_class = ResourceForm
-    template_name = 'resources/resource_form.html'
+    template_name = 'resource/resource_form.html'
     success_url = reverse_lazy('resources:resource_list')
     permission_required = 'resources.add_resource'
 
@@ -69,7 +69,7 @@ class ResourceCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView
 class ResourceUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Resource
     form_class = ResourceForm
-    template_name = 'resources/resource_form.html'
+    template_name = 'resource/resource_form.html'
     success_url = reverse_lazy('resources:resource_list')
     permission_required = 'resources.change_resource'
 
@@ -79,7 +79,7 @@ class ResourceUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView
 
 class ResourceDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Resource
-    template_name = 'resources/resource_confirm_delete.html'
+    template_name = 'resource/resource_confirm_delete.html'
     success_url = reverse_lazy('resources:resource_list')
     permission_required = 'resources.delete_resource'
 
@@ -90,13 +90,13 @@ class ResourceDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
 # ResourceAllocation Views
 class ResourceAllocationListView(LoginRequiredMixin, ListView):
     model = ResourceAllocation
-    template_name = 'resources/allocation_list.html'
+    template_name = 'resource/allocation_list.html'
     context_object_name = 'allocations'
 
 class ResourceAllocationCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = ResourceAllocation
     form_class = ResourceAllocationForm
-    template_name = 'resources/allocation_form.html'
+    template_name = 'resource/allocation_form.html'
     success_url = reverse_lazy('resources:allocation_list')
     permission_required = 'resources.add_resourceallocation'
 
@@ -107,7 +107,7 @@ class ResourceAllocationCreateView(LoginRequiredMixin, PermissionRequiredMixin, 
 class ResourceAllocationUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = ResourceAllocation
     form_class = ResourceAllocationForm
-    template_name = 'resources/allocation_form.html'
+    template_name = 'resource/allocation_form.html'
     success_url = reverse_lazy('resources:allocation_list')
     permission_required = 'resources.change_resourceallocation'
 
@@ -117,7 +117,7 @@ class ResourceAllocationUpdateView(LoginRequiredMixin, PermissionRequiredMixin, 
 
 class ResourceAllocationDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = ResourceAllocation
-    template_name = 'resources/allocation_confirm_delete.html'
+    template_name = 'resource/allocation_confirm_delete.html'
     success_url = reverse_lazy('resources:allocation_list')
     permission_required = 'resources.delete_resourceallocation'
 
@@ -128,13 +128,13 @@ class ResourceAllocationDeleteView(LoginRequiredMixin, PermissionRequiredMixin, 
 # MaintenanceLog Views
 class MaintenanceLogListView(LoginRequiredMixin, ListView):
     model = MaintenanceLog
-    template_name = 'resources/maintenance_log_list.html'
+    template_name = 'resource/maintenance_log_list.html'
     context_object_name = 'maintenance_logs'
 
 class MaintenanceLogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = MaintenanceLog
     form_class = MaintenanceLogForm
-    template_name = 'resources/maintenance_log_form.html'
+    template_name = 'resource/maintenance_log_form.html'
     success_url = reverse_lazy('resources:maintenance_log_list')
     permission_required = 'resources.add_maintenancelog'
 
@@ -145,7 +145,7 @@ class MaintenanceLogCreateView(LoginRequiredMixin, PermissionRequiredMixin, Crea
 class MaintenanceLogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = MaintenanceLog
     form_class = MaintenanceLogForm
-    template_name = 'resources/maintenance_log_form.html'
+    template_name = 'resource/maintenance_log_form.html'
     success_url = reverse_lazy('resources:maintenance_log_list')
     permission_required = 'resources.change_maintenancelog'
 
@@ -155,7 +155,7 @@ class MaintenanceLogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Upda
 
 class MaintenanceLogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = MaintenanceLog
-    template_name = 'resources/maintenance_log_confirm_delete.html'
+    template_name = 'resource/maintenance_log_confirm_delete.html'
     success_url = reverse_lazy('resources:maintenance_log_list')
     permission_required = 'resources.delete_maintenancelog'
 
